@@ -1,0 +1,17 @@
+CC := gcc
+CXX := g++
+CFLAGS := -g -Wall 
+
+CXXFLAGS := ${CFLAGS}
+
+FILES := $(wildcard *.c)
+TARGETS := $(patsubst %.c, %, ${FILES})
+FILES := $(wildcard *.cpp)
+TARGETS += $(patsubst %.cpp, %, ${FILES})
+
+.PHONY: all clean
+
+all: ${TARGETS}
+
+clean:
+	${RM} ${TARGETS}
