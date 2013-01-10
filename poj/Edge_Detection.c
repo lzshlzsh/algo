@@ -3,15 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define OUT_PAIR_NUM_INC 2
+#define OUT_PAIR_NUM_INC 1000
 
 typedef struct rle_pair_t {
-    int value;
     int len;
-}rle_pair_t;
+    unsigned char value;
+}__attribute__((packed)) rle_pair_t;
 
 static rle_pair_t s_in_pair[1000];
-static int s_in_nb, s_w, s_h;
+static int s_in_nb, s_w, s_len;
 
 static rle_pair_t *s_out_pair = NULL;
 static int s_out_size = 0, s_out_nb;
@@ -28,14 +28,14 @@ static void print_result()
         }
     }
     if (s_out_nb > 0) {
-        printf("%d %d\n", s_out_pair[s_out_nb - 1].value, s_in_pair[s_in_nb - 1].len - len);
+        printf("%d %d\n", s_out_pair[s_out_nb - 1].value, s_len - len);
     }
     printf("0 0\n");
 }
 
 static inline int inside(int x, int y)
 {
-    return x >= 0 && x < s_w && y >= 0 && y < s_h;
+    return x >= 0 && x < s_w && y >= 0 && (y * s_w + x) < s_len;
 }
 
 static int binary_search(rle_pair_t *pair, int size, int len, int *reti)
@@ -143,10 +143,11 @@ int main()
             s_in_pair[s_in_nb].len = len;
             s_in_nb++;
         }
-        s_h = len / s_w;
+        s_len = len;
         for (i = 0, len = 0; i < s_in_nb; len = s_in_pair[i].len, i++) {
             dispose_pixel(len % s_w, len / s_w);
         }
+        dispose_pixel(len % s_w, len / s_w);
         print_result();
     }
     printf("0\n");
