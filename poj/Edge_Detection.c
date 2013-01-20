@@ -144,10 +144,19 @@ int main()
             s_in_nb++;
         }
         s_len = len;
-        for (i = 0, len = 0; i < s_in_nb; len = s_in_pair[i].len, i++) {
+        for (i = 0, len = 0; i < s_in_nb; i++) {
             dispose_pixel(len % s_w, len / s_w);
+            if ((s_w - 1) == len % s_w) {
+                if (len + 1 < s_len) {
+                    dispose_pixel(0, len / s_w + 1);
+                }
+                if (len + s_w + 1 < s_len) {
+                    dispose_pixel(0, len / s_w + 2);
+                }
+            }
+            len = s_in_pair[i].len;
         }
-        dispose_pixel(len % s_w, len / s_w);
+        dispose_pixel(0, len / s_w - 1);
         print_result();
     }
     printf("0\n");
