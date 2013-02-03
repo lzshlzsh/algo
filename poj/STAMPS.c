@@ -1,32 +1,17 @@
 #include <stdio.h>
-#include <assert.h>
 #include <stdlib.h>
 
-#define SIZE_INC 20
+#define MAX_TYPE_NB 64
 
-static char *s_type = NULL;
-static int s_type_size = 0;
+static char s_type[MAX_TYPE_NB];
 static int s_type_nb = 0;
-static char *s_customer = NULL;
-static int s_customer_size = 0;
-static int s_customer_nb = 0;
 
 static char s_search[4];
 static char s_result[4];
 static char s_rlen;
-static char s_request;
+static int s_request;
 static char s_max_tn;
 static char s_tie = 0;
-
-static void add_element(char **base, int *size, int *nb, int el)
-{
-    if (*nb >= *size) {
-        *size += SIZE_INC * sizeof(base[0]);
-        *base = realloc(*base, *size);
-        assert(base);
-    }
-    (*base)[(*nb)++] = (char)el;
-}
 
 static void print_result()
 {
@@ -54,15 +39,15 @@ static int stop(int si, char tn, int acc)
     char m1, m2;
 
     if (acc > s_request) {
-        goto yes;
+        return 1;
     }
     if (acc < s_request) {
-        goto no;
+        return 0;
     }
 
     /* acc eq */
     if (tn < s_max_tn) {
-        goto yes;
+        return 1;
     }
 
     if (tn > s_max_tn) {
@@ -71,7 +56,7 @@ static int stop(int si, char tn, int acc)
     
     /* tn eq */
     if (si > s_rlen) {
-        goto yes;
+        return 1;
     }
 
     if (si < s_rlen) {
@@ -91,12 +76,12 @@ static int stop(int si, char tn, int acc)
         goto save;
     }
     if (m1 < m2) {
-        goto yes;
+        return 1;
     }
 
     /* m1 eq m2, tie */
     s_tie = 1;
-    goto yes;
+    return 1;
 
 save:
     s_tie = 0;
@@ -105,10 +90,7 @@ save:
     for (i = 0; i < si; i++) {
         s_result[i] = s_search[i];
     } 
-yes:
     return 1;
-no:
-    return 0;
 }
 
 static void solve(int ti, int si, int tn, int acc)
@@ -143,34 +125,25 @@ static void solve(int ti, int si, int tn, int acc)
 
 int main()
 {
-    int dig, ret, i;
+    int dig, ret;
     
 repeat:
     s_type_nb = 0;
     while ((ret = scanf("%d", &dig)) > 0 && dig > 0) {
-       add_element(&s_type, &s_type_size, &s_type_nb, dig); 
+        s_type[s_type_nb++] = (char)dig;
     }
 
     if (ret < 0) {
         return 0;
     }
-    s_customer_nb = 0;
-    while (scanf("%d", &dig) && dig > 0) {
-       add_element(&s_customer, &s_customer_size, &s_customer_nb, dig); 
-    }
-    
-    for (i = 0; i < s_customer_nb; i++) {
+    while (scanf("%d", &s_request) && s_request > 0) {
         s_rlen = 0;
-        s_request = s_customer[i];
         s_max_tn = 0;
         solve(0, 0, 0, 0);
         print_result();
-    } 
+    }
     
-
     goto repeat;
 
-    free(s_type);
-    free(s_customer);
     return 0;
 }
