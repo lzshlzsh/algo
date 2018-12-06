@@ -1,6 +1,6 @@
 CC := gcc
 CXX := g++
-CFLAGS := -g -Wall -m32
+CFLAGS := -g -Wall -O2
 
 CXXFLAGS := ${CFLAGS}
 
@@ -21,4 +21,3 @@ clean:
 	${RM} ${TARGETS}
 	@for i in ${DIRS}; do \
 		${MAKE} -C $$i clean; done
-

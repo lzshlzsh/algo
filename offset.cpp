@@ -17,7 +17,7 @@ struct A{
 int main()
 {
 	A a __attribute((__aligned(4)));
-	cout << (int)&((A *)0)->f << endl;
+	cout << (size_t)&((A *)0)->f << endl;
 	cout << offsetof(A, a) << endl;
 	cout << offsetof(A, b) << endl;
 	cout << offsetof(A, f) << endl;
