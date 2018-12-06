@@ -1,6 +1,6 @@
 CC := gcc
 CXX := g++
-CFLAGS := -g -Wall -m32
+CFLAGS := -g -Wall -O2
 
 CXXFLAGS := ${CFLAGS}
 
@@ -15,10 +15,9 @@ DIRS := $(shell find . -maxdepth 1 -type d  | grep  '/')
 
 all: ${TARGETS}
 	@for i in ${DIRS}; do \
-		${MAKE} -C $$i clean; done
+		${MAKE} -C $$i; done
 
 clean:
 	${RM} ${TARGETS}
 	@for i in ${DIRS}; do \
 		${MAKE} -C $$i clean; done
-
