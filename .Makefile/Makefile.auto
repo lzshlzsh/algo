@@ -1,0 +1,227 @@
+# 使用方法
+# 所有变量请在include本文件之前定义
+#
+# 用户可选自定义变量：
+# 1. BUILD_FIRST_PB：首先编译的.pb的文件，用在.pb文件有include依赖关系的场景
+# 2. BUILD_FIRST_DIR：首先编译的目录，用在依赖库等需要首先构建的场景
+# 3. TARGET：构建目标，如果没有定义会使用默认目标
+# 4. CLEAN_FILE：make clean时需要额外清理的文件
+#
+# 构建的三类目标，他们之间互斥，不能同时定义
+# 1. NEED_AUTO_RULE：可执行文件。默认一个目录只生产一个只可行文件，
+# 如果需要每个c/cpp文件都生成可执行文件，定义NEED_AUTO_MULTI_TARGET即可
+# 2. NEED_AUTO_RULE_SO：动态链接库文件
+# 3. NEED_AUTO_RULE_STATIC_LIB：静态连接库文件
+# 
+################################################################################
+ifdef NEED_AUTO_RULE_SO
+NEED_AUTO_RULE_COM := 1
+endif
+
+ifdef NEED_AUTO_RULE
+NEED_AUTO_RULE_COM := 1
+endif
+
+ifdef NEED_AUTO_RULE_STATIC_LIB
+NEED_AUTO_RULE_COM := 1
+endif
+
+ifdef NEED_AUTO_RULE_COM
+NEED_AUTO_DEP := 1
+endif
+
+################################################################################
+#define default TARGET
+ifdef NEED_AUTO_RULE
+ifndef NEED_AUTO_MULTI_TARGET
+ifndef TARGET
+TARGET := $(notdir $(CURDIR))
+$(info set TARGET=${TARGET} automatically)
+endif
+endif
+endif
+
+ifdef NEED_AUTO_RULE_SO
+ifndef TARGET
+TARGET := lib$(notdir $(CURDIR)).so
+$(info set TARGET=${TARGET} automatically)
+endif
+endif
+
+ifdef NEED_AUTO_RULE_STATIC_LIB
+ifndef TARGET
+TARGET := lib$(notdir $(CURDIR)).a
+$(info set TARGET=${TARGET} automatically)
+endif
+endif
+################################################################################
+ifdef NEED_AUTO_RULE_COM
+.PHONY: all clean
+
+PROTOC ?= protoc
+
+%.pb.o : %.pb.cc 
+	${CXX} ${CXXFLAG} $(CXXFLAGS) -c -o $@  $<
+
+%.pb.cc : %.proto 
+	${PROTOC} -I$(dir $<) $< --cpp_out=${CURDIR}
+
+PB_FILE += $(wildcard *.proto)
+PB_FILE := $(abspath ${PB_FILE})
+BUILD_FIRST_PB := $(abspath ${BUILD_FIRST_PB})
+PB_FILE := $(BUILD_FIRST_PB) $(filter-out ${BUILD_FIRST_PB},${PB_FILE})
+__VPATH := $(shell echo "$(sort $(dir ${PB_FILE}))" | tr -s ' ' '\n' | uniq \
+	| tr -s '\n' ':')
+PB_FILE := $(notdir ${PB_FILE})
+PB_VPATH += ${__VPATH}
+vpath %.proto ${PB_VPATH}
+
+PB_HEAD += $(patsubst %.proto,%.pb.h,$(PB_FILE))
+PB_SRC += $(patsubst %.proto,%.pb.cc,$(PB_FILE))
+
+SRC += $(wildcard *.c)
+SRC += $(wildcard *.cpp)
+SRC := $(abspath ${SRC})
+__VPATH := $(shell echo "$(sort $(dir ${SRC}))" | tr -s ' ' '\n' | uniq \
+	| tr -s '\n' ':')
+#generated ${PB_SRC}
+SRC += ${PB_SRC}
+SRC := $(notdir ${SRC})
+CXX_VPATH += ${__VPATH}
+vpath %.c ${CXX_VPATH}
+vpath %.cpp ${CXX_VPATH}
+
+C_OBJ += $(patsubst %.c,%.o,$(filter %.c,${SRC}))
+CXX_OBJ += $(patsubst %.cpp,%.o,$(filter %.cpp,${SRC}))
+PB_OBJ += $(patsubst %.pb.cc, %.pb.o,$(filter %.pb.cc,$(SRC)))
+OBJ += ${C_OBJ} ${CXX_OBJ} ${PB_OBJ}
+
+SUBDIRS := $(dir $(abspath \
+    $(shell find . -mindepth 2 -maxdepth 2 -name ?akefile)))
+BUILD_FIRST_DIR := $(abspath ${BUILD_FIRST_DIR})
+SUBDIRS := ${BUILD_FIRST_DIR} $(filter-out ${BUILD_FIRST_DIR},${SUBDIRS})
+SUBDIRS_CLEAN := $(addsuffix _clean,${SUBDIRS})
+.PHONY: ${SUBDIRS} ${SUBDIRS_CLEAN}
+
+ifdef NEED_AUTO_MULTI_TARGET
+TARGET += $(patsubst %.o,%,${OBJ})
+endif
+
+all: %: ${SUBDIRS} ${TARGET} 
+
+${SUBDIRS}: %:
+	${MAKE} -C $@
+
+CLEAN_FILE += ${TARGET} ${OBJ} ${DEP_DIR} ${PB_HEAD} ${PB_SRC}
+
+clean: %: ${SUBDIRS_CLEAN}
+ifneq "$(strip ${CLEAN_FILE})" ""
+	${RM} -r ${CLEAN_FILE}
+endif
+
+${SUBDIRS_CLEAN}: %:
+	${MAKE} -C $(patsubst %_clean,%,$@) clean
+
+endif
+
+#//////////////////////////////////////////////////////////////////////////////#
+# NEED_AUTO_RULE
+ifdef NEED_AUTO_RULE
+
+ifdef NEED_AUTO_RULE_SO
+$(error "NEED_AUTO_RULE conflicts with NEED_AUTO_RULE_SO")
+endif
+
+ifdef NEED_AUTO_RULE_STATIC_LIB
+$(error "NEED_AUTO_RULE conflicts with NEED_AUTO_RULE_STATIC_LIB")
+endif
+
+ifdef NEED_AUTO_MULTI_TARGET
+
+${TARGET}: %: %.o
+	${CXX} ${CXXFLAG} ${CXXFLAGS} -o $@ $< \
+		-Wl,--start-group ${LDFLAG} ${LDFLAGS} -Wl,--end-group
+
+else
+
+${TARGET}: %: ${OBJ}
+	${CXX} ${CXXFLAG} ${CXXFLAGS} -o $@ $(filter-out %.a,$^) \
+		-Wl,--start-group ${LDFLAG} ${LDFLAGS} -Wl,--end-group
+endif
+
+endif
+
+#//////////////////////////////////////////////////////////////////////////////#
+ifdef NEED_AUTO_RULE_SO
+
+ifdef NEED_AUTO_RULE
+$(error "NEED_AUTO_RULE_SO conflicts with NEED_AUTO_RULE")
+endif
+
+ifdef NEED_AUTO_RULE_STATIC_LIB
+$(error "NEED_AUTO_RULE_SO conflicts with NEED_AUTO_RULE_STATIC_LIB")
+endif
+
+${TARGET}: %: ${OBJ}
+	${CXX} ${CXXFLAG} ${CXXFLAGS} -o $@ $(filter-out %.a,$^) \
+		-Wl,--start-group ${LDFLAG} ${LDFLAGS} -Wl,--end-group
+
+endif
+
+#//////////////////////////////////////////////////////////////////////////////#
+ifdef NEED_AUTO_RULE_STATIC_LIB
+ifdef NEED_AUTO_RULE
+$(error "NEED_AUTO_RULE_STATIC_LIB conflicts with NEED_AUTO_RULE")
+endif
+
+ifdef NEED_AUTO_RULE_SO
+$(error "NEED_AUTO_RULE_STATIC_LIB conflicts with NEED_AUTO_RULE_SO")
+endif
+
+${TARGET}: %: ${OBJ}
+	${AR} ${ARFLAGS} $@ $(filter-out %.a,$^)
+endif
+################################################################################
+# NEED_AUTO_DEP
+ifdef NEED_AUTO_DEP
+
+#Usage: $(call mkdep)
+define mkdep
+	set -e
+	${CXX} ${CXXFLAG} ${CXXFLAGS} $^ -MM -MF $@
+endef
+
+#Usage: $(call mkdir,dir_list)
+mkdir = $(foreach c,$(1),$(shell set -e; \
+    [ -d $(c) ] || mkdir -p $(c)))
+
+reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) \
+					$(firstword $(1))
+
+DEP_DIR := .dep
+__mkdir := $(call mkdir,${DEP_DIR})
+
+C_DEP += $(patsubst %.c,${DEP_DIR}/%.d,$(notdir $(filter %.c,${SRC})))
+CXX_DEP += $(patsubst %.cpp,${DEP_DIR}/%.d, \
+					 $(notdir $(filter %.cpp,${SRC})))
+PB_DEP += $(patsubst %.pb.cc,${DEP_DIR}/%.pb.d, \
+					$(notdir $(filter %.pb.cc,${SRC})))
+DEP += $(call reverse,${CXX_DEP}) $(call reverse,${C_DEP}) \
+			 $(call reverse,${PB_DEP})
+
+${C_DEP}: ${DEP_DIR}/%.d: %.c
+	$(call mkdep)
+
+${CXX_DEP}: ${DEP_DIR}/%.d: %.cpp
+	$(call mkdep)
+
+${PB_DEP}: ${DEP_DIR}/%.pb.d: %.pb.cc
+	$(call mkdep)
+
+ifneq "${MAKECMDGOALS}" "clean"
+include ${DEP}
+endif
+
+endif
+
+################################################################################
