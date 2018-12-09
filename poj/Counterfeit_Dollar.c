@@ -8,8 +8,6 @@ static char s_noteven[MAX_DOL];
 
 static void solve(const char **str)
 {
-    int 
-
     switch (str[2][0]) {
         case 'e':
             break;

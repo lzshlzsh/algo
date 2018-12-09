@@ -31,11 +31,10 @@ private:
      * @return 0 if success, < 0 otherwise
      */
     int coins(const std::vector<int> &coins, const int amount, int cur_amount, int n) {
-        for (std::vector<int>::iterator it = coins.begin(); it != coins.end(); ++it) {
+        for (auto it = coins.begin(); it != coins.end(); ++it) {
             cur_amount += *it;
             n++;
             if (cur_amount < amount) {
-                if ()
             }
         }
     }

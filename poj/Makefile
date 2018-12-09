@@ -14,10 +14,10 @@ DIRS := $(shell find . -maxdepth 1 -type d  | grep  '/')
 .PHONY: all clean
 
 all: ${TARGETS}
-	@for i in ${DIRS}; do \
+	@set -e; for i in ${DIRS}; do \
 		${MAKE} -C $$i; done
 
 clean:
 	${RM} ${TARGETS}
-	@for i in ${DIRS}; do \
+	@set -e; for i in ${DIRS}; do \
 		${MAKE} -C $$i clean; done
