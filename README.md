@@ -1,3 +1,7 @@
+# 编译环境配置
+```
+git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --squash
+```
 # 最长单调上升子序列算法[max_nodec.cpp](max_nodec.cpp)
 - 时间复杂度: `O(nlog(n))`
 - 空间复杂度: `O(n)`
