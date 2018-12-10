@@ -42,11 +42,12 @@ int main() {
 
   reverse(s);
 
+  std::cout << "top<";
   while (!s.empty()) {
-    std::cout << s.top() << ' ';
+    std::cout << s.top() << ',';
     s.pop();
   }
-  std::cout << '\n';
+  std::cout << ">bottom\n";
 
   return 0;
 }
