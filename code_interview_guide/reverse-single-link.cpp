@@ -37,23 +37,6 @@ int print_link(const Node *head) {
   return 0;
 }
 
-Node *reverse_link2(Node *head) {
-  if (!head || !head->next_) {
-    return head;
-  }
-
-  auto next = head->next_;
-  head->next_ = nullptr;
-  while (next) {
-    auto tmp = next->next_;
-    next->next_ = head;
-    head = next;
-    next = tmp;
-  }
-
-  return head;
-}
-
 int reverse_link(Node *head) {
   Node *tail = head;
   Node *cur = head;
@@ -66,29 +49,67 @@ int reverse_link(Node *head) {
     tail = tail->next_;
     cur = cur->next_->next_;
   }
-  cur = reverse_link2(tail->next_);
+  cur = tail->next_; //first node of right half
   tail->next_ = nullptr;
+  auto prev = tail; // last node of left half
 
-  tail = cur;
-  for (; ;) {
-    auto value = cur->value_;
-    cur->value_ = head->value_;
-    head->value_ = value;
+  while (cur) {
+    auto next = cur->next_;
+    cur->next_ = prev;
+    prev = cur;
+    cur = next;
+  }
 
-    if (!cur->next_ || !head->next_) {
-      break;
+  cur = prev; // last node of right half
+  while (cur && head) {
+    if (cur != head) {
+      auto value = cur->value_;
+      cur->value_ = head->value_;
+      head->value_ = value;
     }
+
     cur = cur->next_;
     head = head->next_;
   }
 
-  // old number
-  if (head->next_) {
-    head = head->next_;
+  cur = nullptr;
+  while (prev) {
+    head = prev->next_;
+    prev->next_ = cur;
+    cur = prev;
+    prev= head;
   }
 
-  // revere right half
-  head->next_ = reverse_link2(tail);
+  return 0;
+}
+
+int reverse_link2(Node *head) {
+  if (!head || !head->next_) {
+    return 0;
+  }
+
+  auto tail = head->next_;
+  while (tail->next_) {
+    tail = tail->next_;
+  }
+
+  // swap head and tail
+  auto value = head->value_;
+  head->value_ = tail->value_;
+  tail->value_ = value;
+
+  // swap middle
+  auto prev = tail;
+  auto cur = head->next_;
+  while (cur != tail) {
+    auto next = cur->next_;
+    cur->next_ = prev;
+    prev = cur;
+    cur = next;
+  }
+
+  head->next_ = prev;
+
   return 0;
 }
 
@@ -107,6 +128,8 @@ int test(const int size = 10) {
 
   print_link(head);
   reverse_link(head);
+  print_link(head);
+  reverse_link2(head);
   print_link(head);
 
   while (head) {
