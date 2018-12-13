@@ -92,10 +92,10 @@ int reverse_link(Node *head) {
   return 0;
 }
 
-int test() {
+int test(const int size = 10) {
   Node *head = nullptr, *tail = nullptr;
 
-  for (auto i = 0; i < 10; ++i) {
+  for (auto i = 0; i < size; ++i) {
     auto cur = new Node(i);
     if (!head) {
       head = cur;
@@ -122,6 +122,10 @@ int test() {
 } // namespace
 
 
-int main() {
-  return test();
+int main(int argc, char **argv) {
+  auto size = 10;
+  if (argc >= 2) {
+    size = atoi(argv[1]);
+  }
+  return test(size);
 }
