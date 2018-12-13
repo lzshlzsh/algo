@@ -10,12 +10,13 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 namespace {
 
 int print_vec(const std::vector<int> &vec) {
   for (auto const &it: vec) {
-    std::cout << it << ' ';
+    std::cout << std::setw(2) << it << ' ';
   }
   std::cout << std::endl;
   return 0;
@@ -54,8 +55,12 @@ int quicksort(std::vector<int> &vec, const int start, const int end) {
 
 int test() {
   std::vector<int> vec;
-  auto constexpr num = 20;
+  auto num = random() % 30;
   
+  while (num <= 0) {
+    num = random() % 30;
+  }
+
   for (auto i = 0; i < num; ++i) {
     vec.emplace_back(random() % (2 * num));
   }
@@ -69,5 +74,6 @@ int test() {
 } // namespace
 
 int main() {
+  srandom(time(nullptr));
   return test();
 }
