@@ -22,6 +22,7 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 ### 解法
 - 时间复杂度：`O(n*m)`
 - 空间复杂度：`O(n*m)`
+
 设`f(i,j)`为`S[0..i-1]`和`T[0..j-1]`的最长公共子序列的长度。那么：
 1. `f(i,j) = 0`当`i == 0`或者`j == 0`
 2. `f(i,j) = f(i-1,j-1) + 1`当`S[i-1] == T[j-1]`
@@ -54,6 +55,11 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 ## 解法
 - 时间复杂度：`O(m+n)`
 - 空间复杂度：`O(m)`
+
 前缀函数`f: {0,1,...,m-1} -> {-1,0,...,m-2}, f(i) = max{k | k < i, P[0..k]为P[0..i]的后缀}`
 
+```
+f(0..m-1) = -1
+
+```
 
