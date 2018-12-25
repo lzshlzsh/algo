@@ -18,7 +18,7 @@ static inline int random_str(std::string &str, const size_t len) {
   char *c_str = const_cast<char *>(str.data());
 
   for (auto i = 0; i < len; ++i) {
-    c_str[i] = 'a' + random() % 10;
+    c_str[i] = 'a' + random() % (len+1);
   }
   return 0;
 }
