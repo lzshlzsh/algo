@@ -19,7 +19,7 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 求两个字符串`S[0..m-1]`和`T[0..n-1]`的最长公共子序列。
 例如`S=dgebbf, T=egefcb`，其最长公共子序列为`ge`。
 
-### 解法一
+### 解法
 - 时间复杂度：`O(n*m)`
 - 空间复杂度：`O(n*m)`
 设`f(i,j)`为`S[0..i-1]`和`T[0..j-1]`的最长公共子序列的长度。那么：
@@ -32,7 +32,7 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 求两个字符串`S[0..m-1]`和`T[0..n-1]`的最长公共子串。
 例如`S=abchg, T=bcjdg`，其最长公共子序列为`bcg`。
 
-### 解法
+### 解法一
 - 时间复杂度：`O(n*m)`
 - 空间复杂度：`O(n*m)`
 
@@ -40,6 +40,10 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 1. `f(i,j) = 0`当`i == 0`或者`j == 0`
 2. `f(i,j) = f(i-1,j-1) + 1`当`S[i-1] == T[j-1]`
 3. `f(i,j) = 0`当`S[i-1] != T[j-1]`
+
+### 解法二
+- 时间复杂度：
+- 空间复杂度：
 
 # 字符串问题
 
