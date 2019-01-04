@@ -53,6 +53,7 @@ int reverse_link(Node *head) {
   tail->next_ = nullptr;
   auto prev = tail; // last node of left half
 
+  // 后半部分反转
   while (cur) {
     auto next = cur->next_;
     cur->next_ = prev;
@@ -60,6 +61,7 @@ int reverse_link(Node *head) {
     cur = next;
   }
 
+  // 交换节点值
   cur = prev; // last node of right half
   while (cur && head) {
     if (cur != head) {
@@ -72,6 +74,7 @@ int reverse_link(Node *head) {
     head = head->next_;
   }
 
+  // 后半部分反转回去
   cur = nullptr;
   while (prev) {
     head = prev->next_;
