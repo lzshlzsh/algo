@@ -23,13 +23,13 @@ int lc_substr(const std::string &str1, const std::string &str2) {
   int lc_max = 0;
   size_t pos = 0;
   
-  lc.resize(len1);
+  lc.resize(len1 + 1);
   for (auto &it: lc) {
-    it.resize(len2);
+    it.resize(len2 + 1);
   }
 
-  for (auto i = 0; i < len1; ++i) {
-    for (auto j = 0; j < len2; ++j) {
+  for (auto i = 0; i < len1 + 1; ++i) {
+    for (auto j = 0; j < len2 + 1; ++j) {
       if (i == 0 || j == 0) {
         lc[i][j] = 0;
       } else if (str1[i-1] == str2[j-1]) {

@@ -33,15 +33,16 @@ void preorder_traverse_norecur(BtreeNode *head) {
   std::stack<BtreeNode *> stack;
 
   stack.emplace(head);
+  // 循环不变性：head节点已入栈，以head节点为根的子树尚未遍历
   while (!stack.empty()) {
-    auto cur = stack.top();
+    head = stack.top();
     stack.pop();
-    std::cout << cur->value_ << ' ';
-    if (cur->right_) {
-      stack.emplace(cur->right_);
+    std::cout << head->value_ << ' ';
+    if (head->right_) {
+      stack.emplace(head->right_);
     }
-    if (cur->left_) {
-      stack.emplace(cur->left_);
+    if (head->left_) {
+      stack.emplace(head->left_);
     }
   }
 }
@@ -62,11 +63,22 @@ void inorder_traverse_norecur(BtreeNode *head) {
   std::stack<BtreeNode *>stack;
 
   stack.emplace(head);
+  // 循环不变性：
+  // 不变性1. head节点已入栈，以head节点为根的子树尚未遍历。或者
+  // 不变性2. head节点为叶节点
   while (!stack.empty()) {
+    // 循环中做三件事
+    // 1. 沿着左子树入栈
     while (head->left_) {
       head = head->left_;
       stack.emplace(head);
     }
+    // 2. 回退栈。
+    //  2.1 如果满足不变性1，则head左子树为空。
+    //  此时需要遍历head节点以及head的右子树。
+    //  2.2 如果满足不变性2，则head左右子树都为空。
+    //  设上次遍历输出的节点为O则栈顶恰好时后继节点，因为：
+    //  如果从左子树回退，后继节点即是作子树的
     auto t = stack.top();
     stack.pop();
     std::cout << t->value_ << ' ';
