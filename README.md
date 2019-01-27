@@ -12,8 +12,12 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 - 时间复杂度: `O(nlog(n))`
 - 空间复杂度: `O(n)`
 
-假设f为所求，那么
-`TODO:`
+假设`f(i)`为以`A[i]`结尾的最长单调上升子序列的长度，那么
+1. `f(i) = 1`，当`i == 0`
+2. `f(i) = max{f(j) + 1| j < i, A[j] <= A[i]}`   --- (式1)
+3. 所求最长单调上升子序列的长度为`max{f(i)}`
+
+每次计算`f(i)`按照(式1)遍历`A[0..i-1]`计算，整个算法时间复杂度为`O(n*n)`。我们注意到，对于`j, k`满足`j < i，k < i, f(k) <= f(j)`，如果`A[k] > A[j]`，那么`A[k]和f(k)`是没有必要的。因为如果`A[i] > A[k] >= A[j]`，那么`f(i) >= f(j) + 1 >= f(k) + 1`。因此，我们只需保存`f(i_1) < f(i_2) < ... < f(i_t)`，满足`A[i_1] < A[i_2] < ... < A[i_t], f(i_j) = f(i_j-1) + 1`。按(式1)计算`f(i)`时，找到第一个`A[j]`满足`A[j] > A[i]`，`f(i) = f(j)`，并替换`f(j)`为`f(i)`。如果没有找到这样的j，那么`f(i) = f(i_t) + 1`。很显然，每次(式1)计算的时间复杂度不超过为`O(log(n))`，总的时间复杂度：`O(nlog(n))`。
 
 ## 最长公共子序列[longest_common_subseq.cpp](longest_common_subseq.cpp)
 求两个字符串`S[0..m-1]`和`T[0..n-1]`的最长公共子序列。
