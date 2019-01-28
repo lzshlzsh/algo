@@ -60,10 +60,29 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 - 时间复杂度：`O(m+n)`
 - 空间复杂度：`O(m)`
 
-前缀函数`f: {0,1,...,m-1} -> {-1,0,...,m-2}, f(i) = max{k | k < i, P[0..k]为P[0..i]的后缀}`
+前缀函数`f: {0,1,...,m-1} -> {-1,0,...,m-2}, f(i) = max{k | k < i, P[0..k]为P[0..i]的后缀}`，前缀函数计算算法：
 
 ```
 f(0..m-1) = -1
-
+j = -1
+for i in [1, m-1]:
+  while j >= 0 and P[j+1] != P[i]:
+    j = f(j)
+  if P[j+1] == P[i]:
+    j++
+  f(i) = j
 ```
 
+搜索算法：
+
+```
+j = -1
+for i in [0, n-1]:
+  while j >= 0 and P[j+1] != A[i]:
+    j = f(j)
+  if A[j+1] == A[i]:
+    j++
+  if j == m-1:
+    print "find P at i-m+1"
+    j = f(j)
+```
