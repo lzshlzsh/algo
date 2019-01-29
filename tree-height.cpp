@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
   std::cout << num << ": " << get_height(root) << std::endl;
   std::cout << num << ": " << get_height(root, 0) << std::endl;
 
+  free_array_tree(root);
   return 0;
 }
 

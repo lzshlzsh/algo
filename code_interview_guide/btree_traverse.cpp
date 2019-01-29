@@ -155,6 +155,8 @@ void test(const size_t node_num) {
   std::cout << "o: ";
   postorder_traverse_norecur(head);
   std::cout << '\n';
+
+  free_array_tree(head);
 }
 
 } // namespace

@@ -9,6 +9,8 @@
 #ifndef  BTREE_COMMON_H_
 #define  BTREE_COMMON_H_
 
+#include <cstddef>
+
 namespace common {
 
 /**
@@ -52,6 +54,13 @@ static inline BtreeNode *build_array_tree(const size_t node_num) {
     }
   }
   return head;
+}
+
+static inline void free_array_tree(BtreeNode *root) {
+  if (!root) {
+    return;
+  }
+  delete []root;
 }
 
 } // namespace common
