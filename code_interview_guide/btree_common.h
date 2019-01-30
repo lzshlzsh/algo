@@ -10,6 +10,7 @@
 #define  BTREE_COMMON_H_
 
 #include <cstddef>
+#include <cmath>
 
 namespace common {
 
@@ -61,6 +62,21 @@ static inline void free_array_tree(BtreeNode *root) {
     return;
   }
   delete []root;
+}
+
+static inline int get_height(const BtreeNode *root) {
+  if (!root) {
+    return 0;
+  }
+  return std::fmax(get_height(root->left_) + 1, get_height(root->right_) + 1);
+}
+
+static inline int get_height(const BtreeNode *root, int lvl) {
+  if (!root) {
+    return lvl;
+  }
+  return std::fmax(get_height(root->left_, lvl + 1),
+                  get_height(root->right_, lvl + 1));
 }
 
 } // namespace common
