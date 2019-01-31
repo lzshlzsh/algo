@@ -1,11 +1,11 @@
 /**
-* @file tree_edge.cpp
-* @brief
-* @version 1.0
-* @date 01/29/2019 10:41:36 PM
-* @author lzshlzsh,lzshlzsh@163.com
-* @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
-*/
+ * @file 3-tree_edge.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:21:24 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include <stdlib.h>
 
 #include <vector>
@@ -24,7 +24,7 @@ using LeftRightEdge = std::vector<std::pair<const BtreeNode *,
       const BtreeNode *>>;
 
 // 最底层的叶节点
-using Leaf = std::vector<const BtreeNode *>;
+using Edge = std::unordered_set<const BtreeNode *>;
 
 BtreeNode *build_myarray_tree() {
   auto root = new BtreeNode[16];
@@ -63,8 +63,7 @@ BtreeNode *build_myarray_tree() {
 int get_edge(
   const BtreeNode *root,
   LeftRightEdge &left_right_edge,
-  Leaf &leaf,
-  const int height,
+  Edge &edge,
   const int lvl = 0) {
   if (!root) {
     return 0;
@@ -74,13 +73,39 @@ int get_edge(
   }
   left_right_edge[lvl].second = root;
 
-  if (lvl == height - 1 && !root->left_ && !root->right_) {
-    leaf.emplace_back(root);
+  if (!root->left_ && !root->right_) {
+    edge.emplace(root);
   }
 
-  get_edge(root->left_, left_right_edge, leaf, height, lvl+1);
-  get_edge(root->right_, left_right_edge, leaf, height, lvl+1);
+  get_edge(root->left_, left_right_edge, edge, lvl+1);
+  get_edge(root->right_, left_right_edge, edge, lvl+1);
 
+  return 0;
+}
+
+int preorder_print(const BtreeNode *root, const Edge &edge);
+
+int postorder_print(const BtreeNode *root, const Edge &edge) {
+  if (!root) {
+    return 0;
+  }
+  preorder_print(root->left_, edge);
+  postorder_print(root->right_, edge);
+  if (edge.count(root)) {
+    std::cout << root->value_ << ' ';
+  }
+  return 0;
+}
+
+int preorder_print(const BtreeNode *root, const Edge &edge) {
+  if (!root) {
+    return 0;
+  }
+  if (edge.count(root)) {
+    std::cout << root->value_ << ' ';
+  }
+  preorder_print(root->left_, edge);
+  postorder_print(root->right_, edge);
   return 0;
 }
 
@@ -90,37 +115,15 @@ int print_edge1(const BtreeNode *root) {
   }
   auto const height = get_height(root);
   LeftRightEdge left_right_edge;
-  Leaf leaf;
-  std::unordered_set<const BtreeNode *> leaf_set;
+  Edge edge;
 
   left_right_edge.resize(height);
-  get_edge(root, left_right_edge, leaf, height);
-
-  // 先打印左边界
-  for (auto i = 0; i < height; ++i) {
-    std::cout << left_right_edge[i].first->value_ << ' ';
+  get_edge(root, left_right_edge, edge);
+  for (auto const &it: left_right_edge) {
+    edge.emplace(it.first);
+    edge.emplace(it.second);
   }
-  std::cout << '|';
-  // 再打印最底层的非左边界的叶节点
-  for (auto const &it: leaf) {
-    if (it != left_right_edge[height-1].first) {
-      std::cout << it->value_ << ' ';
-    }
-    leaf_set.emplace(it);
-  }
-  // 再打印右边界未曾打印的节点
-  for (auto i = height-1; i >= 0; --i) {
-    // 节点已在左边界打印
-    if (left_right_edge[i].second == left_right_edge[i].first) {
-      continue;
-    } 
-    // 节点已在叶节点打印
-    if (i == height - 1 && leaf_set.count(left_right_edge[i].second) > 0) {
-      continue;
-    }
-    std::cout << left_right_edge[i].second->value_ << ' ';
-  }
-
+  preorder_print(root, edge);
   std::cout << std::endl;
   return 0;
 }

@@ -1,12 +1,11 @@
 /**
-* @file btree_traverse.cpp
-* @brief
-* @version 1.0
-* @date 01/20/2019 06:11:27 PM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
-*/
-
+ * @file 3-btree_traverse.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:21:18 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include <iostream>
 #include <stack>
 

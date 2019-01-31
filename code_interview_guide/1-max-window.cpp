@@ -1,14 +1,18 @@
 /**
-* @file max-window.cpp
-* @brief
-* @version 1.0
-* @date 12/10/2018 12:44:53 PM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2018 Tencent. All Rights Reserved.
-*/
+ * @file 1-max-window.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:20:35 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include <iostream>
 #include <vector>
 #include <list>
+
+#include "../array_common.h"
+
+using namespace common;
 
 namespace {
 
@@ -38,20 +42,17 @@ std::vector<int> get_max_window(const int *A, const size_t num,
 
 int main() {
   const int A[] = {4, 3, 5, 4, 3, 3, 6, 7};
-  auto const ret = get_max_window(A, sizeof(A) / sizeof(A[0]), 3);
+  auto const array_len = sizeof(A) / sizeof(A[0]);
+  auto const win_len = 3;
+  auto const ret = get_max_window(A, array_len, win_len);
 
-  for (auto const &it: A) {
-    std::cout << it << ' ';
-  }
-  std::cout << std::endl;
+  print_array(A, array_len);
 
-  for (auto i = 0; i < 2; ++i) {
-    std::cout << "  ";
+  for (auto i = 0; i < win_len - 1; ++i) {
+    std::cout << std::setfill(' ') << std::setw(5) << ' ';
   }
-  for (auto const &it: ret) {
-    std::cout << it << ' ';
-  }
-  std::cout << std::endl;
+
+  print_array(ret, ret.size()); 
   return 0;
 }
 

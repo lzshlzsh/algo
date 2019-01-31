@@ -1,11 +1,11 @@
 /**
-* @file get-intersect-node.cpp
-* @brief
-* @version 1.0
-* @date 12/19/2018 11:53:03 PM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2018 Tencent. All Rights Reserved.
-*/
+ * @file 2-get-intersect-node.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:20:56 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include "node_common.h"
 
 using namespace common;

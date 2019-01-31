@@ -1,11 +1,11 @@
 /**
-* @file reverse-knodes.cpp
-* @brief
-* @version 1.0
-* @date 12/19/2018 09:23:03 AM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2018 Tencent. All Rights Reserved.
-*/
+ * @file 2-reverse-knodes.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:21:04 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include "node_common.h"
 
 #include <stdlib.h>

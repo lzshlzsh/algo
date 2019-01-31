@@ -1,11 +1,11 @@
 /**
-* @file stack-reverse.cpp
-* @brief
-* @version 1.0
-* @date 12/05/2018 01:07:29 PM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2018 Tencent. All Rights Reserved.
-*/
+ * @file 1-stack-reverse.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:20:48 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include <stack>
 #include <iostream>
 

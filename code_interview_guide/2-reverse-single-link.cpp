@@ -1,12 +1,11 @@
 /**
-* @file reverse-single-link.cpp
-* @brief
-* @version 1.0
-* @date 12/13/2018 09:32:52 AM
-* @author sammieliu,sammieliu@tencent.com
-* @copyright Copyright 1998 - 2018 Tencent. All Rights Reserved.
-*/
-
+ * @file 2-reverse-single-link.cpp
+ * @brief
+ * @version 1.0
+ * @date 01/31/2019 12:21:11 AM
+ * @author lzshlzsh,lzshlzsh@163.com
+ * @copyright Copyright 1998 - 2019 Tencent. All Rights Reserved.
+ */
 #include <iostream>
 
 namespace {
