@@ -16,7 +16,8 @@ using namespace common;
 
 namespace {
 
-std::vector<int> get_max_window(const int *A, const size_t num,
+template <typename T>
+std::vector<int> get_max_window(const T &A, const size_t num,
                                 const size_t win) {
   std::list<int> max_queue;
   std::vector<int> ret;
@@ -25,7 +26,7 @@ std::vector<int> get_max_window(const int *A, const size_t num,
     while (!max_queue.empty() && A[i] >= A[max_queue.back()]) {
       max_queue.pop_back();
     }
-    if (!max_queue.empty() && (max_queue.front() <= (i-win))) {
+    if (!max_queue.empty() && i >= win && (max_queue.front() <= (i-win))) {
       max_queue.pop_front();
     }
     max_queue.emplace_back(i);
@@ -38,21 +39,35 @@ std::vector<int> get_max_window(const int *A, const size_t num,
   return ret;
 }
 
-}
+template <typename T>
+int test(const T &array, const size_t array_len, const size_t win_len) {
+  auto const ret = get_max_window(array, array_len, win_len);
 
-int main() {
-  const int A[] = {4, 3, 5, 4, 3, 3, 6, 7};
-  auto const array_len = sizeof(A) / sizeof(A[0]);
-  auto const win_len = 3;
-  auto const ret = get_max_window(A, array_len, win_len);
-
-  print_array(A, array_len);
+  print_array(array, array_len);
 
   for (auto i = 0; i < win_len - 1; ++i) {
     std::cout << std::setfill(' ') << std::setw(5) << ' ';
   }
 
   print_array(ret, ret.size()); 
+
+  return 0;
+}
+
+}
+
+int main(int argc, char **argv) {
+  const int A[] = {4, 3, 5, 4, 3, 3, 6, 7};
+  int len = 10;
+
+  srandom(time(nullptr));
+
+  test(A, sizeof(A) / sizeof(A[0]), 3);
+
+  if (argc >= 2) {
+    len = atoi(argv[1]);
+  }
+  test(build_vector_random(len), len, 3);
   return 0;
 }
 
