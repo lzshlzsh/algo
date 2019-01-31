@@ -11,6 +11,8 @@
 
 #include <cstddef>
 #include <cmath>
+#include <sstream>
+#include <iostream>
 
 namespace common {
 
@@ -77,6 +79,28 @@ static inline int get_height(const BtreeNode *root, int lvl) {
   }
   return std::fmax(get_height(root->left_, lvl + 1),
                   get_height(root->right_, lvl + 1));
+}
+
+static inline int print_tree_graph(
+  const BtreeNode *root, const char direct=' ', const int height=0) {
+  if (!root) {
+    return 0;
+  }
+  print_tree_graph(root->right_, 'v', height + 1);
+
+  std::stringstream ss;
+  auto const width = 15;
+
+  ss << direct << root->value_ << direct;
+  auto const print = ss.str();
+  auto const left = (width - print.length()) / 2;
+  auto const right = width - left - print.length();
+
+  std::cout << std::string(width * height + left, ' ')
+    << print << std::string(right, ' ') << std::endl;
+
+  print_tree_graph(root->left_, '^', height + 1);
+  return 0;
 }
 
 } // namespace common
