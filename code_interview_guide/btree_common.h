@@ -82,14 +82,14 @@ static inline int get_height(const BtreeNode *root, int lvl) {
 }
 
 static inline int print_tree_graph(
-  const BtreeNode *root, const char direct=' ', const int height=0) {
+  const BtreeNode *root, const char direct=' ', const int height=0,
+  const int width=15) {
   if (!root) {
     return 0;
   }
-  print_tree_graph(root->right_, 'v', height + 1);
+  print_tree_graph(root->right_, 'v', height + 1, width);
 
   std::stringstream ss;
-  auto const width = 15;
 
   ss << direct << root->value_ << direct;
   auto const print = ss.str();
@@ -99,7 +99,7 @@ static inline int print_tree_graph(
   std::cout << std::string(width * height + left, ' ')
     << print << std::string(right, ' ') << std::endl;
 
-  print_tree_graph(root->left_, '^', height + 1);
+  print_tree_graph(root->left_, '^', height + 1, width);
   return 0;
 }
 

@@ -23,9 +23,6 @@ namespace {
 using LeftRightEdge = std::vector<std::pair<const BtreeNode *,
       const BtreeNode *>>;
 
-// 最底层的叶节点
-using Edge = std::unordered_set<const BtreeNode *>;
-
 BtreeNode *build_myarray_tree() {
   auto root = new BtreeNode[16];
   
@@ -60,10 +57,30 @@ BtreeNode *build_myarray_tree() {
   return root;
 }
 
-int get_edge(
+BtreeNode *build_myarray_tree2() {
+  BtreeNode *root = new BtreeNode[8];
+
+  for (auto i = 0; i < 8; ++i) {
+    root[i].value_ = i + 1;
+  }
+
+  root[0].left_ = &root[1];
+  root[0].right_ = &root[2];
+
+  root[1].left_ = &root[3];
+  root[1].right_ = &root[4];
+
+  root[2].left_ = &root[5];
+
+  root[5].left_ = &root[6];
+  root[5].right_ = &root[7];
+
+  return root;
+}
+
+int get_left_right_node(
   const BtreeNode *root,
   LeftRightEdge &left_right_edge,
-  Edge &edge,
   const int lvl = 0) {
   if (!root) {
     return 0;
@@ -73,39 +90,28 @@ int get_edge(
   }
   left_right_edge[lvl].second = root;
 
-  if (!root->left_ && !root->right_) {
-    edge.emplace(root);
-  }
-
-  get_edge(root->left_, left_right_edge, edge, lvl+1);
-  get_edge(root->right_, left_right_edge, edge, lvl+1);
+  get_left_right_node(root->left_, left_right_edge, lvl+1);
+  get_left_right_node(root->right_, left_right_edge, lvl+1);
 
   return 0;
 }
 
-int preorder_print(const BtreeNode *root, const Edge &edge);
-
-int postorder_print(const BtreeNode *root, const Edge &edge) {
+int print_leaf_not_in_left(const BtreeNode *root,
+               const LeftRightEdge &left_right_edge,
+               const int lvl = 0) {
   if (!root) {
     return 0;
   }
-  preorder_print(root->left_, edge);
-  postorder_print(root->right_, edge);
-  if (edge.count(root)) {
-    std::cout << root->value_ << ' ';
-  }
-  return 0;
-}
 
-int preorder_print(const BtreeNode *root, const Edge &edge) {
-  if (!root) {
-    return 0;
-  }
-  if (edge.count(root)) {
+  if (!root->left_ && !root->right_ &&
+      root != left_right_edge[lvl].first &&
+      root != left_right_edge[lvl].second) {
     std::cout << root->value_ << ' ';
   }
-  preorder_print(root->left_, edge);
-  postorder_print(root->right_, edge);
+
+  print_leaf_not_in_left(root->left_, left_right_edge, lvl+1);
+  print_leaf_not_in_left(root->right_, left_right_edge, lvl+1);
+
   return 0;
 }
 
@@ -115,15 +121,23 @@ int print_edge1(const BtreeNode *root) {
   }
   auto const height = get_height(root);
   LeftRightEdge left_right_edge;
-  Edge edge;
 
   left_right_edge.resize(height);
-  get_edge(root, left_right_edge, edge);
-  for (auto const &it: left_right_edge) {
-    edge.emplace(it.first);
-    edge.emplace(it.second);
+  get_left_right_node(root, left_right_edge);
+ 
+  for (auto i = 0; i < height; ++i) {
+    std::cout << left_right_edge[i].first->value_ << ' ';
   }
-  preorder_print(root, edge);
+  std::cout << '|';
+  print_leaf_not_in_left(root, left_right_edge);
+
+  std::cout << '|';
+  for (auto i = height-1; i >= 0; --i) {
+    if (left_right_edge[i].second != left_right_edge[i].first) {
+      std::cout << left_right_edge[i].second->value_ << ' ';
+    }
+  }
+
   std::cout << std::endl;
   return 0;
 }
@@ -142,15 +156,25 @@ int main(int argc, char **argv) {
 
   auto root1 = build_array_tree(num);
   auto root2 = build_myarray_tree();
+  auto root3 = build_myarray_tree2();
   
+  print_tree_graph(root1, ' ', 0, 6);
   print_edge1(root1);
   print_edge2(root1);
 
+  std::cout << "\033[32m------------------------------------------\033[0m\n";
+  print_tree_graph(root2, ' ', 0, 6);
   print_edge1(root2);
   print_edge2(root2);
 
+  std::cout << "\033[32m------------------------------------------\033[0m\n";
+  print_tree_graph(root3, ' ', 0, 6);
+  print_edge1(root3);
+  print_edge2(root3);
+
   free_array_tree(root1);
   free_array_tree(root2);
+  free_array_tree(root3);
   return 0;
 }
 
