@@ -15,8 +15,6 @@
 using namespace std;
 
 class Solution {
- public:
-
   const std::string preprocess(const std::string &s) {
     // 预处理，把"babad"处理成"^#b#a#b#a#d#$"
     if (s.empty()) {
@@ -31,9 +29,12 @@ class Solution {
     return ret;
   }
 
+ public:
   /**
    * @brief 
    * 参考：https://articles.leetcode.com/longest-palindromic-substring-part-ii/
+   * 时间复杂度：O(N)
+   * 空间复杂度：O(N)
    * @param[in] s
    * @return
    */
@@ -49,7 +50,7 @@ class Solution {
       
       p[i] = (r > i) ? std::min(p[i_mirror], r - i) : 0;
 
-      // 扩充p[i]
+      // 扩充p[i]，隐含的扩充r，最多扩充N次
       while (t[i + p[i] + 1] == t[i - p[i] - 1]) {
         p[i]++;
       }
@@ -75,6 +76,51 @@ class Solution {
   std::string longestPalindrome(std::string s) {
     return manacher_algorithm(s);
   }
+
+  /**
+   * @brief
+   * 动态规划算法
+   * @param[in] s
+   * @return
+   */
+  const std::string dynamic_programming_algo(const std::string &s) {
+    auto const len = s.length();
+    std::vector<std::vector<bool>> f;
+   
+    if (len == 0) {
+      return "";
+    } 
+
+    f.resize(len);
+    for (auto &it: f) {
+      it.resize(len, false);
+    }
+    auto max_i = 0, max_len = 1;
+    
+    for (auto t = 0; t < len; ++t) {
+      for (auto i = 0; (i + t) < len; ++i) {
+        auto const j = i + t;
+        if (j == i) {
+          f[i][j] = true;
+        } else if (j - i == 1) {
+          f[i][j] = (s[i] == s[j]);
+        } else {
+          f[i][j] = (f[i + 1][j - 1] && s[i] == s[j]);
+        }
+//        if (f[i][j]) {
+//          std::cout << "T: " << s.substr(i, j-i+1) << std::endl;
+//        } else {
+//          std::cout << "F: " << s.substr(i, j-i+1) << std::endl;
+//        }
+        if (f[i][j] && max_len < (j - i + 1)) {
+          max_i = i;
+          max_len = j - i + 1;
+        }
+      }
+    }
+
+    return s.substr(max_i, max_len);
+  }
 };
 
 int main(int argc, char **argv) {
@@ -87,6 +133,7 @@ int main(int argc, char **argv) {
 
   std::cout << s << std::endl;
   std::cout << solution.longestPalindrome(s) << std::endl;
+  std::cout << solution.dynamic_programming_algo(s) << std::endl;
 
   return 0;
 }
