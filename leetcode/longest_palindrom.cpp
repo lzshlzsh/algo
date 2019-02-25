@@ -29,6 +29,46 @@ class Solution {
     return ret;
   }
 
+  const std::string lc_substr_palindrom(
+    const std::string &s, const std::string &s_reverse) {
+    std::vector<std::vector<int>> f; 
+    auto const n = s.size();
+
+    f.resize(n + 1);
+    for (auto &it: f) {
+      it.resize(n + 1, 0);
+    }
+
+    auto max_lc = 0;
+    auto max_i = 0;
+    for (auto i = 0; i < n; ++i) {
+      for (auto j = 0; j < n; ++j) {
+        if (s[i] == s_reverse[j]) {
+          f[i+1][j+1] = f[i][j] + 1;
+        } else {
+          f[i+1][j+1] = 0;
+        }
+
+        // f[i+1][j+1]表示以s[i]\s_reverse[j]结尾的公共字串的长度，那么
+        // 公共字串为回文的话，需要满足：
+        // 令l = f[i+1][j+1]
+        // k = i-l+1
+        // k+j = n-1
+        // ==> j = n-1-k = n-2-i+l
+        // index:     0 1 2 3 4 5 6 7
+        // s:         a b d c e d b a
+        // s_reverse: a b d e c d b a
+        //
+        if ((n - 2 - i + f[i+1][j+1]) == j && f[i+1][j+1] > max_lc) {
+          max_lc = f[i+1][j+1];
+          max_i = i;
+        }
+      }
+    }
+
+    return s.substr(max_i - max_lc + 1, max_lc);
+  }
+
  public:
   /**
    * @brief 
@@ -121,6 +161,20 @@ class Solution {
 
     return s.substr(max_i, max_len);
   }
+
+  std::string lc_substr_algo(const std::string &s) {
+    if (s.empty()) {
+      return "";
+    }
+
+    std::string s_reverse;
+
+    for (int i = s.length() - 1; i >= 0; --i) {
+      s_reverse += s.substr(i, 1);
+    }
+
+    return lc_substr_palindrom(s, s_reverse);
+  }
 };
 
 int main(int argc, char **argv) {
@@ -134,6 +188,7 @@ int main(int argc, char **argv) {
   std::cout << s << std::endl;
   std::cout << solution.longestPalindrome(s) << std::endl;
   std::cout << solution.dynamic_programming_algo(s) << std::endl;
+  std::cout << solution.lc_substr_algo(s) << std::endl;
 
   return 0;
 }
