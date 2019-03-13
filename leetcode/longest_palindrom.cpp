@@ -83,6 +83,8 @@ class Solution {
     std::vector<int> p;
     auto c = 0, r = 0;
 
+    // p[i]表示以i为中心的回文的回文半径。
+    // 例如x#x: p[0] = 0, p[1] = 1, p[2] = 0
     p.resize(t.length(), 0);
 
     for (auto i = 1; i < t.length() - 1; ++i) {
