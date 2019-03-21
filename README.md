@@ -56,7 +56,7 @@ git subtree pull -P .Makefile https://github.com/lzshlzsh/Makefile.git master --
 在`A[0..n-1]`中查找字串`P[0..m-1]`所有出现的位置`k`，使得
 `A[k..m-1+k] = P[0..m-1]`
 
-## 解法
+### 解法
 - 时间复杂度：`O(m+n)`
 - 空间复杂度：`O(m)`
 
