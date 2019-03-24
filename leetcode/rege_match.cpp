@@ -82,12 +82,15 @@ class Solution {
     // f[i][j] = 
     // 1. f[i-1][j-1] && s[i-1] ~= p[j-1], 当p[j-1] != '*'
     // 2. (f[i-1][j] && s[i-1] ~= p[j-2]) || f[i][j-2], 当p[j-1] == '*'
+    auto match = [](const char s, const char p) {
+        return (p == '.' || s == p);
+    };
     for (auto i = 0; i < s_len+1; ++i) {
         for (auto j = 1; j < p_len+1; ++j) {
-            f[i][j] = (p[j-1] == '*' && j >= 2 && 
-                       (f[i][j-2] || (i >= 1 && f[i-1][j] &&
-                                      (p[j-2] == '.' || s[i-1] == p[j-2])))) ||
-              (i >= 1 && f[i-1][j-1] && (p[j-1] == '.' || s[i-1] == p[j-1]));
+            f[i][j] =
+              (p[j-1] == '*' && j >= 2 &&
+               (f[i][j-2] ||(i >= 1 && f[i-1][j] && match(s[i-1], p[j-2])))) ||
+              (p[j-1] != '*' && i >= 1 && f[i-1][j-1] && match(s[i-1], p[j-1]));
         }
     }
 
