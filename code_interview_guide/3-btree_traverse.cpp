@@ -88,6 +88,34 @@ void inorder_traverse_norecur(BtreeNode *head) {
   }
 }
 
+void inorder_traverse_norecur2(BtreeNode *head) {
+    if (!head) {
+        return;
+    }
+
+    std::stack<BtreeNode *>stack;
+    stack.emplace(head);
+    auto last_enter = head;
+
+    while (!stack.empty()) {
+        head = stack.top();
+
+        // 关键点:
+        // 1. 如何知道左子树已经遍历，通过最近进栈节点是否为栈顶节点判断
+        if (head->left_ && last_enter == head) {
+            stack.emplace(head->left_);
+            last_enter = head->left_;
+        } else {
+            std::cout << head->value_ << ' ';
+            stack.pop();
+            if (head->right_) {
+                stack.emplace(head->right_);
+                last_enter = head->right_;
+            }
+        }
+    }
+}
+
 void postorder_traverse(BtreeNode *head) {
   if (!head) {
     return;
@@ -124,6 +152,36 @@ void postorder_traverse_norecur(BtreeNode *head) {
   }
 }
 
+void postorder_traverse_norecur2(BtreeNode *head) {
+  if (!head) {
+    return;
+  }
+  std::stack<BtreeNode *>stack;
+  stack.emplace(head);
+  auto last_enter = head;
+  BtreeNode *last_visit = nullptr;
+
+  while (!stack.empty()) {
+      head = stack.top();
+
+      // 关键点：
+      // 1. 如何知道左子树已经遍历，通过最近进栈节点是否为栈顶节点判断
+      // 2. 如何知道右子树已经遍历，通过最近打印节点是否为右孩子判断
+      if (head->left_ && last_enter == head) {
+          stack.emplace(head->left_);
+          last_enter = head->left_;
+      } else if (head->right_ && last_visit != head->right_) {
+          stack.emplace(head->right_);
+          last_enter = head->right_;
+      } else {
+          stack.pop();
+          std::cout << head->value_ << ' ';
+          last_visit = head;
+      }
+  }
+}
+
+
 void test(const size_t node_num) {
   if (node_num <= 0) {
     return;
@@ -131,28 +189,36 @@ void test(const size_t node_num) {
 
   auto head = build_array_tree(node_num);
 
-  std::cout << "p: ";
+  std::cout << "p1: ";
   preorder_traverse(head);
   std::cout << '\n';
 
-  std::cout << "p: ";
+  std::cout << "p2: ";
   preorder_traverse_norecur(head);
   std::cout << '\n';
 
-  std::cout << "i: ";
+  std::cout << "i1: ";
   inorder_traverse(head);
   std::cout << '\n';
 
-  std::cout << "i: ";
+  std::cout << "i2: ";
   inorder_traverse_norecur(head);
   std::cout << '\n';
 
-  std::cout << "o: ";
+  std::cout << "i3: ";
+  inorder_traverse_norecur2(head);
+  std::cout << '\n';
+
+  std::cout << "o1: ";
   postorder_traverse(head);
   std::cout << '\n';
 
-  std::cout << "o: ";
+  std::cout << "o2: ";
   postorder_traverse_norecur(head);
+  std::cout << '\n';
+
+  std::cout << "o3: ";
+  postorder_traverse_norecur2(head);
   std::cout << '\n';
 
   free_array_tree(head);
