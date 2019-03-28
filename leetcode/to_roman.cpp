@@ -34,6 +34,79 @@ class Solution {
 
     return roman;
   }
+
+  int romanToInt(string s) {
+    int num = 0;
+    auto len = s.length();
+
+    for (auto i = 0; i < len; ) {
+      switch (s[i]) {
+        case 'I': {
+          if (i < len-1 && (s[i+1] == 'V' || s[i+1] == 'X')) {
+            if (s[i+1] == 'V') {
+              num += 4;
+            } else {
+              num += 9;
+            }
+            i += 2;
+          } else {
+            num += 1;
+            i++;
+          }
+          break;
+        }
+        case 'V': {
+          num += 5;
+          i++;
+          break;
+        }
+        case 'X': {
+          if (i < len-1 && (s[i+1] == 'L' || s[i+1] == 'C')) {
+            if (s[i+1] == 'L') {
+              num += 40;
+            } else {
+              num += 90;
+            }
+            i += 2;
+          } else {
+            num += 10;
+            i++;
+          }
+          break;
+        }
+        case 'L': {
+          num += 50;
+          i++;
+          break;
+        }
+        case 'C': {
+          if (i < len-1 && (s[i+1] == 'D' || s[i+1] == 'M')) {
+            if (s[i+1] == 'D') {
+              num += 400;
+            } else {
+              num += 900;
+            }
+            i += 2;
+          } else {
+            num += 100;
+            i++;
+          }
+          break;
+        }
+        case 'D': {
+          num += 500;
+          i++;
+          break;
+        }
+        case 'M': {
+          num += 1000;
+          i++;
+          break;
+        }
+      }
+    }
+    return num;
+  }
 };
 } // namespace
 
@@ -44,7 +117,9 @@ int main(int argc, char **argv) {
   if (argc >= 2) {
     i = atoi(argv[1]);
   }
-
-  std::cout << i << " -> " << sol.intToRoman(i) << std::endl;
+  
+  auto const str = sol.intToRoman(i);
+  std::cout << i << " -> " << str << std::endl;
+  std::cout << str << " -> " << sol.romanToInt(str) << std::endl;
   return 0;
 }
