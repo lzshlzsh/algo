@@ -8,6 +8,7 @@
 */
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 
 #include  "btree_common.h"
 
@@ -20,6 +21,9 @@ namespace {
 class BstMaxTop
 {
  public:
+  // 节点的统计量（贡献值）,<左子树的贡献值，右子树的贡献值>
+  using NodeStat = std::unordered_map<common::BtreeNode *,
+        std::pair<int, int>>;
   /**
    * @brief
    */
@@ -35,7 +39,8 @@ class BstMaxTop
   }
 
   int bst_maxtop2() {
-    return bst_maxtop2(root_);
+    NodeStat node_stat;
+    return bst_maxtop2(root_, node_stat);
   }
 
  protected:
@@ -119,8 +124,47 @@ class BstMaxTop
     }
   }
 
-  int bst_maxtop2(common::BtreeNode *root) {
-    return 0;
+  int bst_maxtop2(common::BtreeNode *root, NodeStat &node_stat) {
+    if (!root) {
+      return 0;
+    }
+    // 左/右子树为根的最大搜索树节点数，同时得到了每个节点的贡献值
+    auto const left = bst_maxtop2(root->left_, node_stat);
+    auto const right = bst_maxtop2(root->right_, node_stat);
+
+    // 计算当前节点的贡献值
+    auto &stat = node_stat[root];
+    stat.first = merge_left(root, root->left_, node_stat);
+    stat.second = merge_right(root, root->right_, node_stat);
+    return std::max(left, std::max(right, stat.first + stat.second + 1));
+  }
+
+  int merge_left(common::BtreeNode *root, common::BtreeNode *cur,
+                 NodeStat &node_stat) {
+    // 左子树最大值必需比root小
+    if (!cur || cur->value_ > root->value_) {
+      return 0;
+    }
+    auto &stat = node_stat[cur];
+    // 右子树先得有贡献才可以继续判断
+    // 若无贡献则表示cur->right_->value_ < cur.value_，不符合要求
+    if (stat.second) {
+      stat.second = merge_left(root, cur->right_, node_stat);
+    }
+    return stat.first + stat.second + 1;
+  }
+  int merge_right(common::BtreeNode *root, common::BtreeNode *cur,
+                 NodeStat &node_stat) {
+    // 右子树最小值必需比root大
+    if (!cur || cur->value_ < root->value_) {
+      return 0;
+    }
+    auto &stat = node_stat[cur];
+    // 同理：左子树先得有贡献才可以继续判断
+    if (stat.first) {
+      stat.first = merge_right(root, cur->left_, node_stat);
+    }
+    return stat.first + stat.second + 1;
   }
 };
 
