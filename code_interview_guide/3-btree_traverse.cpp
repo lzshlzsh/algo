@@ -181,6 +181,36 @@ void postorder_traverse_norecur2(BtreeNode *head) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+void postorder_traverse_norecur3(BtreeNode *root) {
+  if (!root) {
+    return;
+  }
+  std::stack<BtreeNode *> s;
+  BtreeNode *last_visit = nullptr;
+  for (;;) {
+    while (root) {
+      s.emplace(root);
+      root = root->left_;
+    }
+    for(root = s.top(); root->right_ == nullptr ||
+        last_visit == root->right_; root = s.top()) {
+      std::cout << root->value_ << ' '; 
+      last_visit = root;
+      s.pop();
+      if (s.empty()) {
+        break;
+      }
+    }
+    if (s.empty()) {
+      break;
+    }
+    root = root->right_;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void test(const size_t node_num) {
   if (node_num <= 0) {
@@ -218,6 +248,10 @@ void test(const size_t node_num) {
   std::cout << '\n';
 
   std::cout << "o3: ";
+  postorder_traverse_norecur2(head);
+  std::cout << '\n';
+
+  std::cout << "o4: ";
   postorder_traverse_norecur2(head);
   std::cout << '\n';
 
