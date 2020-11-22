@@ -7,3 +7,4 @@
 !Makefile
 !*.input
 !README.md
+cmake-build-debug/
