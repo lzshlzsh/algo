@@ -16,22 +16,22 @@ static int right(const int i) {
 }
 
 static void heapify(std::vector<int> &array, const int sz, const int i) {
-    int min = i;
+    int max = i;
     for (;;) {
-        const int p = min;
-        const int l = left(min);
-        const int r = right(min);
+        const int p = max;
+        const int l = left(max);
+        const int r = right(max);
 
-        if (l < sz && array[min] < array[l]) {
-            min = l;
+        if (l < sz && array[max] < array[l]) {
+            max = l;
         }
-        if (r < sz && array[min] < array[r]) {
-            min = r;
+        if (r < sz && array[max] < array[r]) {
+            max = r;
         }
-        if (min == p) {
+        if (max == p) {
             break;
         }
-        std::swap(array[min], array[p]);
+        std::swap(array[max], array[p]);
     }
 
 }
